@@ -3,7 +3,12 @@
 }
 
 body {
+    align-items: center;
+    background: linear-gradient(to bottom, #7c3aed, #ede9fe);
+    justify-content: center;
+    display: flex;
     margin: 0;
+    min-height: 100vh;
 }
 
 main {
@@ -17,11 +22,10 @@ h1 {
     text-align: center;
 }
 
-
 /* add posts form */
 
 form {
-    border: 1px solid black;
+    border: none;
     padding: 1em;
     border-radius: 5px;
     width: 100%;
@@ -35,20 +39,22 @@ form h2 {
 }
 
 .input-container {
-    display: flex;   
+    display: flex;
+    flex-direction: column;
     margin-bottom: 1em;
 }
 
-label, input, textarea {
-    display: block;
-    border-radius: 5px;
-    width: 100%;
-    font-size: 16px;
+label {
+    margin-bottom: 0.5em;
+    font-weight: bold;
 }
 
-label {
-    margin-right: 1em;
-    font-weight: bold;
+input,
+textarea {
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 0.5em;
+    border: 1px solid #ccc;
 }
 
 textarea {
@@ -63,12 +69,13 @@ textarea {
     border-radius: 5px;
     padding: 0.5em 1em;
     cursor: pointer;
-    transition: all, 0.5s;
+    transition: all 0.5s;
 }
 
-.btn-submit:hover, .btn-submit:focus {
+.btn-submit:hover,
+.btn-submit:focus {
     transform: scale(1.1);
-     transition: all, 0.5s;
+    transition: all 0.5s;
 }
 
 /* Posts */
@@ -83,7 +90,7 @@ textarea {
 .posts-container h2 {
     text-align: center;
     margin-top: 0;
-    grid-column: 1/-1;
+    grid-column: 1 / -1;
 }
 
 .post-card {
@@ -98,7 +105,7 @@ textarea {
 }
 
 .post-body {
-    margin-bottom: 50px; 
+    margin-bottom: 50px;
 }
 
 .btn-delete {
@@ -112,11 +119,13 @@ textarea {
     border-radius: 5px;
     padding: 0.5em 1em;
     cursor: pointer;
-    transition: all, 0.5s;
+    transition: all 0.5s;
 }
 
-.btn-delete:hover, .btn-delete:focus {
+.btn-delete:hover,
+.btn-delete:focus {
     transform: scale(1.1);
-     transition: all, 0.5s;
+    transition: all 0.5s;
 }
+
 
