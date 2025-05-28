@@ -1,50 +1,71 @@
-import { useEffect, useState } from "react";
-import { useAuthenticator } from '@aws-amplify/ui-react';
-import type { Schema } from "../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
+import { useState, useEffect } from "react";
+import AddPost from "./components/AddPost";
+import Post from "./components/Post";
+import { useAuthenticator } from "@aws-amplify/ui-react";
 
-const client = generateClient<Schema>();
+interface PostType {
+  userId: string;
+  id: number;
+  title: string;
+  body: string;
+}
 
 function App() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-  const {user, signOut } = useAuthenticator();
+  const [posts, setPosts] = useState<PostType[]>([]);
+  const { user, signOut } = useAuthenticator();
 
   useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
+    fetch("https://jsonplaceholder.typicode.com/posts?_limit=4")
+      .then((response) => response.json())
+      .then((data) => setPosts(data));
   }, []);
 
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
-  }
+  const addPost = (title: string, body: string) => {
+    fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      body: JSON.stringify({
+        title,
+        body,
+        userId: Math.random().toString(36).slice(2),
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => setPosts((prevPosts) => [data, ...prevPosts]));
+  };
 
-  function deleteTodo(id: string) {
-    client.models.Todo.delete({ id })
-  }
+  const deletePost = (id: number) => {
+    fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+      method: "DELETE",
+    }).then((response) => {
+      if (response.status === 200) {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+      }
+    });
+  };
 
   return (
     <main>
-      <h1>{user?.signInDetails?.loginId}'s todos</h1>
-      <button onClick={createTodo}>+ new</button>
-      <ul>
-        {todos.map((todo) => (
-          <li 
-          onClick={() => deleteTodo(todo.id)}
-          key={todo.id}>{todo.content}
-          </li>
+      <h1>{user?.signInDetails?.loginId}'s posts</h1>
+      <AddPost addPost={addPost} />
+      <section className="posts-container">
+        <h2>Posts</h2>
+        {posts.map((post) => (
+          <Post
+            key={post.id}
+            id={post.id}
+            title={post.title}
+            body={post.body}
+            deletePost={deletePost}
+          />
         ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
-      </div>
+      </section>
       <button onClick={signOut}>Sign out</button>
     </main>
   );
 }
 
 export default App;
+
